@@ -138,7 +138,7 @@ def cleanup_android(logger, device_serial=None):
     device = mozdevice.ADBAndroid(device_serial)
 
     # Uninstall Fennec
-    device.uninstall_app(app_name='org.mozilla.fennec')
+    device.uninstall_app(app_name='org.mozilla.firefox')
 
     # Remove APK
     try:
@@ -193,8 +193,8 @@ def install_fennec(logger, url, device_serial):
     device = mozdevice.ADBAndroid(device_serial)
 
     # If Fennec istalled, uninstall
-    if device.is_app_installed('org.mozilla.fennec'):
-        device.uninstall_app(app_name='org.mozilla.fennec')
+    if device.is_app_installed('org.mozilla.firefox'):
+        device.uninstall_app(app_name='org.mozilla.firefox')
 
     # Fetch Fennec
     name, headers = urllib.urlretrieve(url, 'fennec.apk')
@@ -403,7 +403,7 @@ def cli(args):
             if args.use_b2g:
                 runner = B2GRunner(cmdargs=[url], device_serial=args.device_serial)
             elif use_android:
-                runner = AndroidRunner(app_name='org.mozilla.fennec',
+                runner = AndroidRunner(app_name='org.mozilla.firefox',
                                        activity_name='.App',
                                        intent='android.intent.action.VIEW',
                                        url=url,
