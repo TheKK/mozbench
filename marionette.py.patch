@@ -1,0 +1,22 @@
+684,685c684,685
+<         if not self.session_id and command != "newSession":
+<             raise errors.MarionetteException("Please start a session")
+---
+>         #if not self.session_id and command != "newSession":
+>             #raise errors.MarionetteException("Please start a session")
+688,689c688,689
+<         if self.session_id:
+<             message["sessionId"] = self.session_id
+---
+>         #if self.session_id:
+>             #message["sessionId"] = self.session_id
+1627a1628,1631
+> 
+> 	print("[After response]")
+> 	print(response)
+> 
+1630c1634,1635
+<             elements.append(HTMLElement(self, x['ELEMENT']))
+---
+>             #elements.append(HTMLElement(self, x['ELEMENT']))
+>             elements.append(HTMLElement(self, x))

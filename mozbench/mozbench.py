@@ -71,6 +71,67 @@ class AndroidRunner(object):
     def wait(self):
         pass
 
+class TVRunner(object):
+
+    def __init__(self, cmdargs=None, host=None, port=None):
+        self.cmdargs = cmdargs or []
+        self.host = host
+        self.port = port
+
+    def start(self):
+        app_name = 'browser'
+        installed_app_name = app_name.lower()
+        installed_app_name = installed_app_name.replace(" ", "-")
+
+        m = marionette.Marionette(host=self.host, port=self.port)
+
+        launch_app = """
+        var launchWithName = function(name) {
+            let apps = window.wrappedJSObject.applications || window.wrappedJSObject.Applications;
+            let installedApps = apps.installedApps;
+            for (let manifestURL in installedApps) {
+              let app = installedApps[manifestURL];
+              let origin = null;
+              let entryPoints = app.manifest.entry_points;
+              if (entryPoints) {
+                for (let ep in entryPoints) {
+                  let currentEntryPoint = entryPoints[ep];
+                  let appName = currentEntryPoint.name;
+                  if (name == appName.toLowerCase()) {
+                    app.launch();
+                    return true;
+                  }
+                }
+              } else {
+                let appName = app.manifest.name;
+                if (name == appName.toLowerCase()) {
+                  app.launch();
+                  return true;
+                }
+              }
+            }
+            return false;
+          };
+        return launchWithName("%s");
+        """
+
+        m.set_script_timeout(5000)
+        m.execute_script(launch_app % app_name.lower())
+
+        script = """
+          setTimeout(function () {window.wrappedJSObject.Browser.navigate('%s')}, 0);
+        """
+
+        browser = m.find_element('css selector', 'iframe[src="app://0077777700140002.myhomescreen.tv/index.html"]')
+        m.switch_to_frame(browser)
+        m.execute_script(script % self.cmdargs[0])
+        m.delete_session()
+
+    def stop(self):
+        pass
+
+    def wait(self):
+        pass
 
 class B2GRunner(object):
 
@@ -401,7 +462,8 @@ def cli(args):
         for i in xrange(0, num_runs):
             logger.info('firefox run %d' % i)
             if args.use_b2g:
-                runner = B2GRunner(cmdargs=[url], device_serial=args.device_serial)
+                # XXX Hard coded
+                runner = TVRunner([url], '10.247.37.64', 2828)
             elif use_android:
                 runner = AndroidRunner(app_name='org.mozilla.fennec',
                                        activity_name='.App',
